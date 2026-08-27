@@ -14,11 +14,9 @@ def load_data(train_path, test_path):
 def add_location_hierarchy(df):
     df = df.copy()
 
-    parts = df["lokasyon"].fillna("BILINMIYOR").astype(str).str.split(">")
-
-    df["il"] = parts.str[0].str.strip()
-    df["bolge"] = parts.str[1].str.strip() if parts.str.len().max() >= 2 else "BILINMIYOR"
-    df["ilce"] = parts.str[2].str.strip() if parts.str.len().max() >= 3 else "BILINMIYOR"
+    df["il"] = df["lokasyon"].str.split(">").str[0]
+    df["bolge"] = df["lokasyon"].apply(lambda x: x.split(">")[1] if len(x.split(">")) == 3 else None)
+    df["ilce"] = df["lokasyon"].apply(lambda x: x.split(">")[1] if len(x.split(">")) == 2 else (x.split(">")[2]))
 
     for col in ["il", "bolge", "ilce"]:
         df[col] = df[col].fillna("BILINMIYOR").astype(str)

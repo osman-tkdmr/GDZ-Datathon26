@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-
+from config import ILCE_NUFUS
 
 def add_calendar_features(df):
     df = df.copy()
@@ -25,10 +25,48 @@ def add_numeric_features(df):
     df["guc_log"] = np.log1p(df["guc"].clip(lower=0))
     return df
 
+import pandas as pd
+
+
+def ilce_features(df: pd.DataFrame):
+  # Excel sayfalarını oku
+  izmir_nufus = pd.read_excel(ILCE_NUFUS, sheet_name=0).rename(
+      columns={"İlçe": "ilce", "2023": "nufus23", "2024": "nufus24", "2025": "nufus25"}
+  )
+  manisa_nufus = pd.read_excel(ILCE_NUFUS, sheet_name=1).rename(
+      columns={"İlçe": "ilce", "2023": "nufus23", "2024": "nufus24", "2025": "nufus25"}
+  )
+
+  # İlgli şehirleri ayır ve verileri birleştir
+  izmir_df = df[df["il"] == "İZMİR"].merge(izmir_nufus, on="ilce", how="left")
+  manisa_df = df[df["il"] == "MANİSA"].merge(manisa_nufus, on="ilce", how="left")
+  diger_df = df[~df["il"].isin(["İZMİR", "MANİSA"])]
+
+  # Hepsini tekrar birleştir
+  return pd.concat([izmir_df, manisa_df, diger_df], ignore_index=True)
+import pandas as pd
+
+
+def ilce_trafo_aded(df: pd.DataFrame):
+  # Her satır için ilgili ilçenin benzersiz trafo sayısını hesaplar ve yeni sütuna yazar
+  df["ilce_trafo_sayisi"] = df.groupby("ilce")["tanim"].transform("nunique")
+  return df
+
+def nufus_bol_trafo_aded(df:pd.DataFrame):
+    df["trafo_per_nufus23"] = df["nufus23"]/df["ilce_trafo_sayisi"]
+    df["trafo_per_nufus24"] = df["nufus24"]/df["ilce_trafo_sayisi"]
+    df["trafo_per_nufus25"] = df["nufus25"]/df["ilce_trafo_sayisi"]
+    return df
+
+
 
 def prepare_features(df):
     df = add_calendar_features(df)
     df = add_numeric_features(df)
+    df = ilce_features(df)
+    df = ilce_trafo_aded(df)
+    df = nufus_bol_trafo_aded(df)
+
 
     for col in ["tanim", "lokasyon", "il", "bolge", "ilce"]:
         df[col] = df[col].fillna("BILINMIYOR").astype(str)
@@ -54,3 +92,4 @@ def align_categories(train_df, valid_df, test_df, categorical_cols):
         test_df[col] = pd.Categorical(test_df[col], categories=categories)
 
     return train_df, valid_df, test_df
+

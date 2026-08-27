@@ -10,10 +10,38 @@ from config import (
     NUMERIC_FEATURES,
     LGB_PARAMS,
 )
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import pandas as pd
+
 from data import load_data, add_location_hierarchy
 from features import prepare_features, align_categories
 from validation import temporal_split, rmsle
 from model import fit_model, predict_log_model
+
+
+def save_feature_importance(model, features, output_dir, top_n=25):
+    importance = pd.DataFrame(
+        {
+            "feature": features,
+            "importance": model.booster_.feature_importance(importance_type="gain"),
+        }
+    ).sort_values("importance", ascending=False)
+
+    importance.to_csv(output_dir / "feature_importance.csv", index=False)
+
+    plot_data = importance.head(top_n).sort_values("importance")
+    fig, ax = plt.subplots(figsize=(10, max(6, len(plot_data) * 0.32)))
+    ax.barh(plot_data["feature"], plot_data["importance"], color="#176b87")
+    ax.set_title("Özellik Önemleri (LightGBM gain)")
+    ax.set_xlabel("Toplam gain")
+    ax.set_ylabel("Özellik")
+    ax.grid(axis="x", alpha=0.25)
+    fig.tight_layout()
+    fig.savefig(output_dir / "feature_importance.png", dpi=160, bbox_inches="tight")
+    plt.close(fig)
 
 
 def main():
@@ -37,6 +65,7 @@ def main():
     )
 
     features = CATEGORICAL_FEATURES + NUMERIC_FEATURES
+    print(features)
 
     X_train = train_part[features]
     X_valid = valid_part[features]
@@ -93,6 +122,8 @@ def main():
         categorical_features=CATEGORICAL_FEATURES,
         params=full_params,
     )
+
+    save_feature_importance(final_model, features, OUTPUT_DIR)
 
     test_pred = predict_log_model(final_model, X_test)
 

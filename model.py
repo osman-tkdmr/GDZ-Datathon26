@@ -19,7 +19,8 @@ def fit_model(
     }
 
     if X_valid is not None and y_valid is not None:
-        fit_kwargs["eval_set"] = [(X_valid, y_valid)]
+        fit_kwargs["eval_X"] = X_valid,
+        fit_kwargs["eval_y"] = y_valid,
         fit_kwargs["callbacks"] = [
             lgb.early_stopping(100, verbose=False),
             lgb.log_evaluation(0),

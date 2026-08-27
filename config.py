@@ -7,6 +7,7 @@ OUTPUT_DIR = BASE_DIR / "outputs"
 TRAIN_PATH = DATA_DIR / "train.csv"
 TEST_PATH = DATA_DIR / "test.csv"
 SAMPLE_PATH = DATA_DIR / "sample_submission.csv"
+ILCE_NUFUS = DATA_DIR / "izmir_manisa_ilce_nufuslari.xlsx"
 
 TARGET = "tuketim"
 ID_COL = "id"
@@ -53,4 +54,11 @@ NUMERIC_FEATURES = [
     "is_weekend",
     "is_month_start",
     "is_month_end",
+    "ilce_trafo_sayisi",
+    "trafo_per_nufus23",
+    "trafo_per_nufus24",
+    "trafo_per_nufus25",
+    "nufus23",
+    "nufus24",
+    "nufus25"
 ]
