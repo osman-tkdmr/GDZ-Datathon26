@@ -396,12 +396,11 @@ def guc_analizi(train, test, output_dir):
 # ============================================================================
 
 def _parse_lokasyon(df):
-    parts = df["lokasyon"].fillna("").str.split(">")
     out = df.copy()
-    out["il"] = parts.str[0].str.strip().replace("", np.nan)
-    out["bolge"] = parts.str[1].str.strip() if parts.str.len().max() and parts.str.len().max() >= 2 else np.nan
-    out["ilce"] = parts.str[2].str.strip() if parts.str.len().max() and parts.str.len().max() >= 3 else np.nan
-    out["lokasyon_jenerik"] = out["lokasyon"].str.strip().eq("GEDİZ EDAŞ") | (parts.str.len() <= 1)
+    out["il"] = out["lokasyon"].str.split(">").str[0]
+    out["bolge"] = out["lokasyon"].apply(lambda x: x.split(">")[1] if len(x.split(">")) == 3 else None)
+    out["ilce"] = out["lokasyon"].apply(lambda x: x.split(">")[1] if len(x.split(">")) == 2 else (x.split(">")[2]))
+    out["lokasyon_jenerik"] = out["lokasyon"].str.strip().eq("GEDİZ EDAŞ") | (out["lokasyon"].str.split(">").str.len() <= 1)
     return out
 
 

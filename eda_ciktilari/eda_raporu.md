@@ -1,6 +1,6 @@
 # Trafo Bazlı Günlük Tüketim Tahmini — EDA Raporu
 
-*Otomatik oluşturulma zamanı: 2026-08-26 18:42*
+*Otomatik oluşturulma zamanı: 2026-08-28 22:00*
 
 Bu rapor `eda.py` scripti tarafından, sağlanan `train.csv` / `test.csv` dosyaları
 üzerinden otomatik olarak üretilmiştir. Tüm sayısal bulgular çalıştırma anındaki
@@ -35,7 +35,7 @@ gerçek veriye dayanır; grafikler `figures/`, ara tablolar `tables/` klasörün
 
 ## 4) LOKASYON HİYERARŞİSİ ANALİZİ
 
-- Lokasyon hiyerarşisinde **2** il, **20** bölge, **30** ilçe seviyesi bulunuyor; satırların **%0.0**'i jenerik "GEDİZ EDAŞ" etiketiyle (hiyerarşi bilgisi eksik) geliyor.
+- Lokasyon hiyerarşisinde **2** il, **3** bölge, **47** ilçe seviyesi bulunuyor; satırların **%0.0**'i jenerik "GEDİZ EDAŞ" etiketiyle (hiyerarşi bilgisi eksik) geliyor.
 - test.csv'deki **47** benzersiz lokasyondan **0** tanesi train.csv'de hiç görülmemiş ✅ — tüm test lokasyonları train'de temsil ediliyor.
 
 ## 5) TRAFO (tanim) YAPISI ANALİZİ — PANEL VERİ BOYUTLARI
@@ -52,7 +52,7 @@ gerçek veriye dayanır; grafikler `figures/`, ara tablolar `tables/` klasörün
 
 - **Haftalık mevsimsellik** belirgin: hafta sonu ortalama tüketim, hafta içine göre **%6.1** farklı → `haftanin_gunu`/`hafta_sonu` özellikleri önemli.
 - **Resmi tatil etkisi**: tatil günlerinde ortalama tüketim normal günlere göre **%-18.3** farklı → bir `tatil_mi` (ve varsa `arefe_mi`) flag özelliği eklenmesi önerilir (script içindeki `HOLIDAYS_TR` takvimi Oca 2025–Tem 2026 aralığını kapsar).
-- `statsmodels` kurulu olmadığı için ACF/PACF ve STL ayrıştırması atlandı (`pip install statsmodels` ile etkinleştirilebilir).
+- ACF/PACF ve STL ayrıştırma grafikleri, güçlü **7 günlük (haftalık) periyodiklik** ve uzun vadeli bir **trend/mevsimsellik** bileşeni olup olmadığını görselleştirir; `figures/08_acf_pacf.png` ve `09_stl_ayristirma.png` dosyalarına bakınız.
 
 ## 8) TEST.CSV ID FORMAT DOĞRULAMASI
 
