@@ -1,3 +1,4 @@
+#gpu_utils.py
 """GPU kullanilabilirligini tespit eden ve her kutuphane (lgb/cat/xgb) icin
 GPU denemesinin sonucunu (basarili/basarisiz) bellekte tutan yardimcilar.
 

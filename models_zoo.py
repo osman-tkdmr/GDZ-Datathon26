@@ -1,3 +1,4 @@
+#models_zoo.py
 """L ensemble icin lgbm CatBoost ve XGBoost sarmalayicilari.
 
 GPU varsa (nvidia-smi calisiyorsa) otomatik denenir; kutuphane GPU

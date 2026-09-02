@@ -1,3 +1,4 @@
+#train_ensemble.py
 """Optuna ile ayri ayri tune edilmis LightGBM + CatBoost + XGBoost ensemble.
 
 Akis:
@@ -94,7 +95,7 @@ def train_all_models(train_part, valid_part, lgb_params, cat_params, xgb_params)
     return models, preds, valid_part[TARGET].values
 
 
-def main(n_optuna_trials=1, n_splits=3):
+def main(n_optuna_trials=50, n_splits=3):
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     train, test = build_dataset()
 
